@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>File Management</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/business-casual.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Josefin+Slab:100,300,400,600,700,100italic,300italic,400italic,600italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div class="brand">File Management System</div>
+    <div class="address-bar">By John</div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <!-- navbar-brand is hidden on larger screens, but visible when the menu is collapsed -->
+                <a class="navbar-brand" href="index.html">Business Casual</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav" style="margin:0px;">
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+    <div class="container">
+    	<div class="row">
+            <div class="box">
+            	<div class="col-lg-12">
+            		<b>Current Directory : </b><span id="CurrentDirectory">./</span>
+				</div>                
+            </div>
+        </div>
+        <div class="row">
+            <div class="box">
+            	<div class="col-lg-12">
+                	<div id="MsgBox" class="alert alert-success hide" role="alert"></div>
+                	<table class="table">
+		            <thead>
+		              <tr>
+		              	<th width="5%"></th>
+		                <th>Name</th>
+		                <th width="5%">Type</th>
+		                <th width="20%">Size</th>
+		                <th width="30%">Actions</th>
+		              </tr>
+		            </thead>
+		            <tbody  id="Maintable"></tbody>
+		          </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="box">
+            	<div class="col-lg-12">
+            		<button type="button" class="btn btn-primary" onclick="return doAction('multidelete',this);">Delete All</button>
+					<button type="button" class="btn btn-primary" onclick="return doAction('multimove',this);" >Move All</button>
+					<button type="button" class="btn btn-primary" onclick="return doAction('upload',this);">Upload</button>
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal" data-whatever="@getbootstrap">Create Directory</button>
+				</div>                
+            </div>
+            <!-- Move Popup -->
+			<div class="modal fade" id="moveModal" tabindex="-1" role="dialog"
+				aria-labelledby="moveModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="moveModalLabel">Move File/Directory</h4>
+						</div>
+						<div class="modal-body">
+							<form>
+							<div class="form-group"><label for="MoveFileName"
+								class="control-label">File Name:</label> <span id="MoveFileName"></span></div>
+							<div class="form-group"><label for="move-to"
+								class="control-label">Move to:</label> <select
+								class="form-control folder-list" id="move-to"></select></div>
+								<input type="hidden"
+								class="form-control" id="move-action">						
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-primary"  onclick="return ajaxAction('move');">Move</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Rename Popup -->
+			<div class="modal fade" id="renameModal" tabindex="-1" role="dialog"
+				aria-labelledby="renameModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="renameModalLabel">Rename File/Directory</h4>
+						</div>
+						<div class="modal-body">
+							<form>
+							<div class="form-group"><label for="recipient-name"
+								class="control-label">File Name:</label> <span id="renameFileName"></span></div>
+							<div class="form-group"><label for="recipient-list"
+								class="control-label">Rename as:</label> <input type="text"
+								class="form-control" id="rename-name"></div>
+								<input type="hidden"
+								class="form-control" id="rename-action">						
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-primary" onclick="return ajaxAction('rename');">Rename</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Create Directory Popup -->
+			<div class="modal fade" id="createModal" tabindex="-1" role="dialog"
+				aria-labelledby="createModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="createModalLabel">Create Directory</h4>
+						</div>
+						<div class="modal-body">
+							<form>
+							<div class="form-group"><label for="create-name"
+								class="control-label">Directory Name:</label> <input type="text"
+								class="form-control" id="create-name"></div>						
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-primary"  onclick="return ajaxAction('create');">Create</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Create Directory Popup -->
+			<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog"
+				aria-labelledby="uploadModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="uploadModalLabel">Upload File</h4>
+					</div>
+					<div class="modal-body">
+						<iframe src="upload.php" id="frameupload" name="frameupload" width="100%" frameborder="0" height="200"></iframe>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary"  onclick="return formSubmit();">Create</button>
+					</div>
+				</div>
+				</div>
+			</div>
+			<!-- Move All Popup -->
+			<div class="modal fade" id="moveAllModal" tabindex="-1" role="dialog"
+				aria-labelledby="moveAllModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="moveAllModalLabel">Move File/Directory</h4>
+						</div>
+						<div class="modal-body">
+							<form>
+							<div class="form-group"><label for="MoveFileName"
+								class="control-label">Selected Files:</label> <span id="MoveallFileName"></span></div>
+							<div class="form-group"><label for="multimove-to"
+								class="control-label">Move to:</label> <select
+								class="form-control folder-list" id="multimove-to"></select></div>
+								<input type="hidden"
+								class="form-control" id="multimove-action">						
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-primary"  onclick="return ajaxAction('multimove');">Move</button>
+						</div>
+					</div>
+				</div>
+			</div>			
+		</div>
+    </div>
+    <!-- /.container -->
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <p>Copyright &copy; John 2015</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+	<script>
+	var activedirectory = "";
+	function formSubmit()
+	{
+		window.frameupload.document.getElementById("formupload").submit();
+		$('#uploadModal').modal('hide');
+		return false;
+	}
+	function formSubmitResponse(response)
+	{
+		$("#MsgBox").removeClass('alert-danger');
+    	$("#MsgBox").removeClass('alert-success');
+    	if(response.msgType == 'success'){
+    		$("#MsgBox").addClass('alert-success');
+    	}	        		
+    	else {
+    		$("#MsgBox").addClass('alert-danger');
+    	}
+    	$("#MsgBox").removeClass('hide');
+    	$("#MsgBox").html(response.msg);
+    	refreshPage(null);	
+		return false;
+	}
+	function doAction(action,elm){
+		switch(action) {
+		    case "move":
+		    	var Selfilename = $(elm).attr("data-name");
+		    	$('#MoveFileName').html(Selfilename);
+		    	$('#move-action').val(elm.href);
+		    	$('#moveModal').modal();
+		        break;
+		    case "rename":
+		    	var Selfilename = $(elm).attr("data-name");
+		    	$('#rename-name').val('');
+		    	$('#renameFileName').html(Selfilename);
+		    	$('#rename-action').val(elm.href);
+		    	$('#renameModal').modal();
+		        break;
+		    case "create":
+		    	ajaxAction(action,null);
+		        break;
+		    case "upload":
+			    $("#frameupload").attr("src","upload.php?folder="+activedirectory);			    
+		    	$('#uploadModal').modal();
+		        break;		        
+		    case "delete":
+		    	ajaxAction(action,elm);
+		    	break;
+		    case "multidelete":
+		    	ajaxAction(action,elm);
+		        break;		        
+		    case "multimove":
+		    	var Selfilename = '';
+		    	$('.multicheckbox:checked').each(
+			    	function (){
+			    		Selfilename+=$(this).val()+", ";
+			    	}
+		    	);
+		    	
+		    	$('#MoveallFileName').html(Selfilename);
+		    	$('#moveAllModal').modal();
+		        break;        
+		    default:
+		        refreshPage(elm);
+		}			
+		return false;
+	}
+
+	function ajaxAction(action,elm) {
+		$("#MsgBox").html('');
+		$("#MsgBox").addClass('hide');
+		params ='';
+		url = 'controller.php';
+		switch(action) {
+		    case "rename":
+		    	url = $('#rename-action').val();
+		    	params = "newname="+$('#rename-name').val();
+		    	$('#renameModal').modal('hide');
+		    	break;
+		    case "move":
+		    	url = $('#move-action').val();	
+		    	params = "newdir="+$('#move-to').val();	
+		    	$('#moveModal').modal('hide');    	
+		        break;
+		    case "create":
+		    	params = "nfname="+$('#create-name').val()+"&ndir="+activedirectory;
+		    	$('#createModal').modal('hide');
+		    	$('#create-name').val('');	    	
+		        break;
+		    case "delete":
+		    	url = elm.href;
+		        break;
+		    case "multimove":
+		    	url = "controller.php";	
+		    	params = "folder="+activedirectory+"&newdir="+$('#multimove-to').val()+"&"+$('.multicheckbox:checked').serialize();	
+		    	$('#moveAllModal').modal('hide');    	
+		        break;
+		    case "multidelete":
+		    	url = "controller.php";	
+		    	params = "folder="+activedirectory+"&"+$('.multicheckbox:checked').serialize();
+		        break;		        	
+		}
+		
+		$.ajax({
+	        type: "POST",
+	        url: url,
+	        crossDomain: true,
+	        dataType: 'json',
+	        data: 'action='+action+'&'+params,
+	        success: function(response) {
+	        	$("#MsgBox").removeClass('alert-danger');
+	        	$("#MsgBox").removeClass('alert-success');
+	        	if(response.msgType == 'success'){
+	        		$("#MsgBox").addClass('alert-success');
+	        	}	        		
+	        	else {
+	        		$("#MsgBox").addClass('alert-danger');
+	        	}
+	        	$("#MsgBox").removeClass('hide');
+	        	$("#MsgBox").html(response.msg);
+	        	refreshPage(null);	
+	        	return false;
+	        },
+	        error: function(response) {
+	        	return false;
+	        }
+	    });
+	    return false;
+	}
+	
+	function refreshPage(elm) {
+		var params = '';
+		if(elm == null){
+			url = 'controller.php';
+			params = "&folder="+activedirectory;
+		}
+		else {
+			url = elm.href;
+		}
+		
+		$.ajax({
+	        type: "POST",
+	        url: url,
+	        crossDomain: true,
+	        dataType: 'json',
+	        data: 'action=list&isajax=true'+params,
+	        success: function(response) {	        		        		
+	        	activedirectory = response.activedirectory;
+	        	$("#Maintable").html(response.content);
+	        	$("#CurrentDirectory").html(response.currentdirectory);
+	        	$(".folder-list").html(response.listdirectory);
+	        	return false;
+	        },
+	        error: function(response) {
+	        	return false;
+	        }
+	    });
+	    return false;
+	}
+	refreshPage(null);
+	</script>
+</body>
+
+</html>
